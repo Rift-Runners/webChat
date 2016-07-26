@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chat usando Websocket</title>
+    <link rel="stylesheet" href="/resources/style.css">
+</head>
+<body>
+    <ul class="pages">
+        <li class="chat page">
+            <div class="chatArea">
+                <ul class="messages"></ul>
+            </div>
+            <input class="inputMessage" placeholder="Chore aqui..."/>
+        </li>
+        <li class="login page">
+            <div class="form">
+                <h3 class="title">Chat Senac ADS</h3>
+                <input class="usernameInput" type="text" maxlength="14" placeholder="Digite seu nome"/>
+            </div>
+        </li>
+    </ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/resources/main.js"></script>
+</body>
+</html>
