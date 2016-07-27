@@ -10,6 +10,14 @@ app.get('/resources/style.css', function(req, res) {
 	res.sendFile(__dirname + '/resources/style.css');
 });
 
+app.get('/resources/images/background.jpg', function(req, res) {
+	res.sendFile(__dirname + '/resources/images/background.jpg');
+});
+
+app.get('/resources/images/backgroundChat.jpg', function(req, res) {
+	res.sendFile(__dirname + '/resources/images/backgroundChat.jpg');
+});
+
 app.get('/resources/main.js', function(req, res) {
 	res.sendFile(__dirname + '/resources/main.js');
 });

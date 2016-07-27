@@ -28,9 +28,9 @@ $(function() {
 	function addParticipantsMessage (data) {
 		var message = '';
 		if (data.numUsers === 1) {
-			message += "Total de pessoas no chat: 1";
+			message += "Users on: 1";
 		} else {
-			message += "Total de pessoas no chat: "+data.numUsers;
+			message += "Users on: "+data.numUsers;
 		}
 		log(message);
 	}
@@ -228,7 +228,7 @@ $(function() {
   socket.on('login', function (data) {
     connected = true;
     // Display the welcome message
-    var message = "Bem vindo ao 4Team";
+    var message = "Welcome to the jungle!";
     log(message, {
       prepend: true
     });
