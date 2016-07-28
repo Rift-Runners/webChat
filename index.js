@@ -22,7 +22,7 @@ app.get('/resources/main.js', function(req, res) {
 	res.sendFile(__dirname + '/resources/main.js');
 });
 
-var port = 8080;
+var port = 8383;
 http.listen(port, function() {
 	console.log("listening on *:" + port);
 });
