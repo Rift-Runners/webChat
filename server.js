@@ -1,30 +1,22 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
 
-app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/index.html');
+var io = require('socket.io').listen(server);
+
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+
+app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/resources'));
+app.use(express.static(__dirname + '/node_modules/socket.io/lib'));
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/resources/style.css', function(req, res) {
-	res.sendFile(__dirname + '/resources/style.css');
-});
-
-app.get('/resources/images/background.jpg', function(req, res) {
-	res.sendFile(__dirname + '/resources/images/background.jpg');
-});
-
-app.get('/resources/images/backgroundChat.jpg', function(req, res) {
-	res.sendFile(__dirname + '/resources/images/backgroundChat.jpg');
-});
-
-app.get('/resources/main.js', function(req, res) {
-	res.sendFile(__dirname + '/resources/main.js');
-});
-
-var port = 8080
-http.listen(port, function() {
-	console.log("listening on *:" + port);
+server.listen(app.get('port'), app.get('ip'), function(){
+  console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
 });
 
 var numUsers = 0;
