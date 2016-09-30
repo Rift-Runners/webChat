@@ -6,6 +6,7 @@ var app = express();
 
 //Openshift config
 app.set('port', process.env.PORT || 8080);
+app.set('ip', process.env.IP || 187.4.54.250);
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
