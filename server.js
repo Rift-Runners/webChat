@@ -1,12 +1,11 @@
+//Begin server config
+//var db = require('./resources/db');
 var express = require('express');
+//var mongoose = require('mongoose');
 var app = express();
-var server = require('http').createServer(app);
 
-var io = require('socket.io').listen(server);
-
-//Verifica se a aplicação está sendo rodada do openshift ou local
-app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
-app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+//Openshift config
+app.set('port', process.env.PORT || 8080);
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
@@ -20,11 +19,15 @@ server.listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
 });
 
+//End server config
+
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
 var numUsers = 0;
 
 io.on('connection', function(socket) {
 	var addedUser = false;
-
+        
 	//quando o client envia uma 'new message' esse listen executa
 	socket.on('new message', function(msg){
 		socket.broadcast.emit('new message', {
@@ -36,9 +39,9 @@ io.on('connection', function(socket) {
 	socket.on('add user', function(username) {
 		if(addedUser) return;
 		//registrando nome do usuario
-		socket.username = username;
-		++numUsers;
+                ++numUsers;
 		addedUser = true;
+		socket.username = username;
 		socket.emit('login', {
 			numUsers: numUsers
 		});

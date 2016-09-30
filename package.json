@@ -2,14 +2,16 @@
   "name": "websocketchat",
   "version": "1.0.0",
   "description": "chat with websocket from socket.io",
-  "main": "index.js",
-  "scripts": {"start": "node index.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Diego",
-  "license": "SENAC ADS",
+  "author": "Diego e Guilherme",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
-    "socket.io": "^1.4.6"
+    "socket.io": "^1.4.6",
+
   }
 }
