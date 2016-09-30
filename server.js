@@ -1,12 +1,15 @@
 //Begin server config
-//var db = require('./resources/db');
 var express = require('express');
-//var mongoose = require('mongoose');
-var app = express();
+var User = require('./resources/model/user');
+var Message = require('./resources/model/message');
 
-//Openshift config
+//Conecta ao local que o Mongo está disponibilizado 
+mongoose.connect('mongodb://localhost/webChat');
+
+//Express config
+var app = express();
 app.set('port', process.env.PORT || 8080);
-app.set('ip', process.env.IP || 187.4.54.250);
+app.set('ip', process.env.IP || 127.0.0.1);
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
@@ -31,6 +34,16 @@ io.on('connection', function(socket) {
         
 	//quando o client envia uma 'new message' esse listen executa
 	socket.on('new message', function(msg){
+		var message = Message({
+		   content: msg,
+		   authorUser: socket.username,
+		   onlineUsers: ["test1", "test2"]
+		});
+		message.save(function(err) {
+		  if (err) throw err;
+		  console.log('Message save!');
+		});
+
 		socket.broadcast.emit('new message', {
 			username : socket.username,
 			message : msg
