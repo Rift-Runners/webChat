@@ -26,13 +26,7 @@ $(function() {
 	var socket = io();
 
 	function addParticipantsMessage (data) {
-		var message = '';
-		if (data.numUsers === 1) {
-			message += "Users on: 1";
-		} else {
-			message += "Users on: "+data.numUsers;
-		}
-		log(message);
+		log("Users online: " + data.numUsers);
 	}
 
 	// Sets the client's username
@@ -228,7 +222,7 @@ $(function() {
   socket.on('login', function (data) {
     connected = true;
     // Display the welcome message
-    var message = "Welcome to the jungle!";
+    var message = "Welcome to the inSight!";
     log(message, {
       prepend: true
     });

@@ -19,6 +19,10 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/console', function (req, res) {
+    res.sendFile(__dirname + '/console.html');
+});
+
 app.get('/messages', messageController.list);
 
 var server = require('http').createServer(app);

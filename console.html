@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.2.3/foundation.min.css">
+</head>
+<body>
+<table id="tabela" class="hidden text-center">
+    <tr>
+        <th>Autor</th>
+        <th>Mensagem</th>
+        <th>Data</th>
+    </tr>
+</table>
+<button class="button expand" id="pesquisar">Mostrar todos</button>
+
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.2.3/foundation.js"></script>
+<script>
+    $('#pesquisar').click(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8080/messages',
+            data: $('#messages').serialize(),
+            dataType: "json", //to parse string into JSON object,
+            success: function (data) {
+                if (data) {
+                    var len = data.length;
+                    var txt = "";
+                    if (len > 0) {
+                        for (var i = 0; i < len; i++) {
+                            if (data[i].authorUser && data[i].content && data[i].date) {
+                                txt += "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + data[i].date + "</td></tr>";
+                            }
+                        }
+                        if (txt != "") {
+                            $("#tabela").append(txt).removeClass("hidden");
+                        }
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('error: ' + textStatus + ': ' + errorThrown);
+            }
+        });
+        return false;
+    });
+</script>
+</body>
+</html>
