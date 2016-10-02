@@ -1,13 +1,12 @@
-//Begin server config
 var mongoose = require('mongoose');
 var express = require('express');
-var User = require('./resources/model/user');
-var Message = require('./resources/model/message');
+var models = require('./resources/model/db.js');
+var messageController = require('./resources/controller/messages.js');
 
-//Conecta ao local que o Mongo está disponibilizado 
+//region Server-config
+//Conecta a porta em que o Mongo está disponibilizado
 mongoose.connect('mongodb://localhost:27017/webChat');
 
-//Express config
 var app = express();
 app.set('port', process.env.PORT || 8080);
 app.set('ip', process.env.IP || "127.0.0.1");
@@ -20,29 +19,30 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/messages', messageController.list);
+
 var server = require('http').createServer(app);
 
 server.listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
 });
-//End server config
 
 var io = require('socket.io').listen(server);
+//endregion
 var numUsers = 0;
 
 io.on('connection', function(socket) {
 	var addedUser = false;
         
-	//quando o client envia uma 'new message' esse listener executa
+	//Salva uma mensagem que um user escreveu, junto com a data (por default ela é Date.now)
 	socket.on('new message', function(msg){
-		var message = new Message({
+		var message = new models.Message({
 		   content: msg,
-		   authorUser: socket.username,
-		   onlineUsers: ["test1", "test2"]
+		   authorUser: socket.username
 		});
 		message.save(function(err) {
 		  if (err) throw err;
-		  console.log('Message saved!');
+		  console.log(socket.username + ' message saved!');
 		});
 
 		socket.broadcast.emit('new message', {
@@ -51,14 +51,13 @@ io.on('connection', function(socket) {
 		});
 	});
 
+	//Adiciona um user e compartilha que o mesmo se conectou ao chat
 	socket.on('add user', function(username) {
 		if(addedUser) return;
-		//registrando nome do usuario
-                ++numUsers;
 		addedUser = true;
 		socket.username = username;
 		socket.emit('login', {
-			numUsers: numUsers
+			numUsers: ++numUsers
 		});
 
 		socket.broadcast.emit('user joined', {
@@ -67,29 +66,26 @@ io.on('connection', function(socket) {
 		});
 	});
 
-	//quando client emite 'typing', isso é compartilhado com os outros
+	//Compartilha que o user está escrevendo
 	socket.on('typing', function() {
 		socket.broadcast.emit('typing', {
 			username : socket.username
 		});
 	});
 
-	//quando client emite 'stop typing' isso é compartilhado
+	//Compartilha que o user parou de escrever
 	socket.on('stop typing', function() {
 		socket.broadcast.emit('stop typing', {
 			username : socket.username
 		});
 	});
 
-	//quando user disconecta...
+	//Momento em que o user desconecta e avisa ao chat do acontecimento
 	socket.on('disconnect', function() {
 		if(addedUser) {
-			--numUsers;
-
-			//avisa a todos que o client saiu
 			socket.broadcast.emit('user left', {
 				username : socket.username,
-				numUsers : numUsers
+				numUsers : --numUsers
 			});
 		}
 	});
