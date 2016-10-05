@@ -10,7 +10,6 @@ mongoose.connect(MONGOLAB_URI);
 
 var app = express();
 app.set('port', process.env.PORT || 8080);
-app.set('ip', process.env.IP || "127.0.0.1");
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
@@ -28,8 +27,8 @@ app.get('/messages', messageController.list);
 
 var server = require('http').createServer(app);
 
-server.listen(app.get('port'), app.get('ip'), function(){
-	console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
+server.listen(app.get('port'), function(){
+	console.log('Express server listening on port :' + app.get('port'));
 });
 
 var io = require('socket.io').listen(server);
