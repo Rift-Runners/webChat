@@ -5,22 +5,22 @@ var messageController = require('./resources/controller/messages.js');
 
 //region Server-config
 //Conecta a porta em que o Mongo está disponibilizado
-mongoose.connect('mongodb://localhost:27017/webChat');
+mongoose.connect('mongodb://127.0.0.1:27017/webChat');
 
 var app = express();
-app.set('port', process.env.PORT);
-app.set('ip', process.env.IP);
+app.set('port', process.env.PORT || 8080);
+app.set('ip', process.env.IP || "127.0.0.1");
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
 app.use(express.static(__dirname + '/node_modules/socket.io/lib'));
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/console', function (req, res) {
-    res.sendFile(__dirname + '/console.html');
+	res.sendFile(__dirname + '/console.html');
 });
 
 app.get('/messages', messageController.list);
@@ -28,25 +28,27 @@ app.get('/messages', messageController.list);
 var server = require('http').createServer(app);
 
 server.listen(app.get('port'), app.get('ip'), function(){
-  console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
+	console.log('Express server listening on port ' + app.get('ip') + ':' + app.get('port'));
 });
 
 var io = require('socket.io').listen(server);
 //endregion
+
 var numUsers = 0;
 
+//region Socketio-config
 io.on('connection', function(socket) {
 	var addedUser = false;
-        
+
 	//Salva uma mensagem que um user escreveu, junto com a data (por default ela é Date.now)
 	socket.on('new message', function(msg){
 		var message = new models.Message({
-		   content: msg,
-		   authorUser: socket.username
+			content: msg,
+			authorUser: socket.username
 		});
 		message.save(function(err) {
-		  if (err) throw err;
-		  console.log(socket.username + ' message saved!');
+			if (err) throw err;
+			console.log(socket.username + ' message saved!');
 		});
 
 		socket.broadcast.emit('new message', {
@@ -94,3 +96,4 @@ io.on('connection', function(socket) {
 		}
 	});
 });
+//endregion

@@ -8,9 +8,7 @@ var messageSchema = new Schema({
    authorUser: String
    // onlineUsers: [String]
 });
-
-var message = mongoose.model('Message', messageSchema);
-module.exports.Message = message;
+module.exports.Message = mongoose.model('Message', messageSchema);
 
 //Schema de user
 var userSchema = new Schema({
@@ -20,5 +18,4 @@ var userSchema = new Schema({
    // password: String
 });
 
-var user = mongoose.model('User', userSchema);
-module.exports.User = user;
+module.exports.User = mongoose.model('User', userSchema);
