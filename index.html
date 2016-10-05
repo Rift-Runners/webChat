@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>inSight WebChat</title>
-        <link rel="stylesheet" href="/resources/style.css">
+        <link rel="stylesheet" href="/dist/styles.css">
     </head>
     <body>
         <ul class="pages">
@@ -11,7 +11,7 @@
                 <div class="chatArea">
                     <ul class="messages"></ul>
                 </div>
-                <input class="inputMessage" placeholder="Fala aí monstrão..."/>
+                <input class="inputMessage" maxlength="2000" placeholder="Fala aí monstrão..."/>
             </li>
             <li class="login page">
                 <div class="form">
@@ -21,6 +21,6 @@
             </li>
         </ul>
         <script src="/socket.io/socket.io.js"></script>
-        <script src="/resources/bundle.js"></script>
+        <script src="/dist/chat.js"></script>
     </body>
 </html>
