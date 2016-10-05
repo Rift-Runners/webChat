@@ -8,8 +8,8 @@ var messageController = require('./resources/controller/messages.js');
 mongoose.connect('mongodb://localhost:27017/webChat');
 
 var app = express();
-app.set('port', process.env.PORT || 8080);
-app.set('ip', process.env.IP || "127.0.0.1");
+app.set('port', process.env.PORT);
+app.set('ip', process.env.IP);
 
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
