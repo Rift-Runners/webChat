@@ -5,7 +5,8 @@ var messageController = require('./resources/controller/messages.js');
 
 //region Server-config
 //Conecta a porta em que o Mongo está disponibilizado
-mongoose.connect('mongodb://127.0.0.1:27017/webChat');
+MONGOLAB_URI = 'mongodb://kleber:bambam@ds049446.mlab.com:49446/webchat';
+mongoose.connect(MONGOLAB_URI);
 
 var app = express();
 app.set('port', process.env.PORT || 8080);
