@@ -1,5 +1,7 @@
+//Chamando o jquery em uma váriavel global
 var $ = require('jquery');
 
+//Função responsável por randomizar as cores dos usuários que logarem
 $(function() {
 	var FADE_TIME = 150; // ms
 	var TYPING_TIMER_LENGTH = 400; // ms
@@ -9,12 +11,11 @@ $(function() {
 	'#3b88eb', '#3824aa', '#a700ff', '#d300e7'
 	];
 
-	// Initialize variables
+	//Criação das váriaveis e inicialização
 	var $window = $(window);
 	var $usernameInput = $('.usernameInput'); // Input for username
 	var $messages = $('.messages'); // Messages area
 	var $inputMessage = $('.inputMessage'); // Input message input box
-
 	var $loginPage = $('.login.page'); // The login page
 	var $chatPage = $('.chat.page'); // The chatroom page
 
@@ -25,8 +26,10 @@ $(function() {
 	var lastTypingTime;
 	var $currentInput = $usernameInput.focus();
 
+	//Chamada do socket.io
 	var socket = io();
 
+	//Adição dos usuários no chat e controle de usuários logados
 	function addParticipantsMessage (data) {
 		log("Users online: " + data.numUsers);
 	}
@@ -201,7 +204,7 @@ $(function() {
       }
     }
   });
-
+		
   $inputMessage.on('input', function() {
     updateTyping();
   });
