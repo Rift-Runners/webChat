@@ -1,39 +1,47 @@
+//Variáveis da aplicação
 var mongoose = require('mongoose');
 var express = require('express');
 var models = require('./resources/model/db.js');
 var messageController = require('./resources/controller/messages.js');
 
 //region Server-config
-//Conecta a porta em que o Mongo está disponibilizado
+//Conecta no DataService MongoLab em que o MongoDb está hospedado
 MONGOLAB_URI = 'mongodb://kleber:bambam@ds049446.mlab.com:49446/webchat';
 mongoose.connect(MONGOLAB_URI);
 
+//Configuração do app para o servidor Heroku
 var app = express();
 app.set('port', process.env.PORT || 8080);
 
+//Importação de diretórios para uso de recursos
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/resources'));
 app.use(express.static(__dirname + '/node_modules/socket.io/lib'));
 
+//Request e response do caminho da página principal
 app.get('/', function (req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
 
+//Request e response do caminho do console
 app.get('/console', function (req, res) {
 	res.sendFile(__dirname + '/console.html');
 });
 
+//Mensagens persistidas no MongoDb
 app.get('/messages', messageController.list);
 
+//Criação do server tanto para o Heroku como local
 var server = require('http').createServer(app);
-
 server.listen(app.get('port'), function(){
 	console.log('Express server listening on port :' + app.get('port'));
 });
 
+//Setando a váriavel io para escutar o server da aplicação
 var io = require('socket.io').listen(server);
 //endregion
 
+//Váriavel que controla o número de usuários conectados
 var numUsers = 0;
 
 //region Socketio-config
