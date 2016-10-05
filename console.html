@@ -18,10 +18,20 @@
 <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.2.3/foundation.js"></script>
 <script>
+    function getMessagesUrl(){
+        var url;
+        if((window.location.href).includes("localhost")){
+            url = "http://localhost:8080/messages";
+        } else {
+            url = "https://ads-webchat.herokuapp.com/messages";
+        }
+        return url;
+    }
+
     $('#pesquisar').click(function () {
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8080/messages',
+            url: getMessagesUrl(),
             data: $('#messages').serialize(),
             dataType: "json", //to parse string into JSON object,
             success: function (data) {
