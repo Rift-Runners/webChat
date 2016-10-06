@@ -1,8 +1,8 @@
 //Variáveis da aplicação
 var mongoose = require('mongoose');
 var express = require('express');
-var models = require('./resources/model/db.js');
-var messageController = require('./resources/controller/messages.js');
+var models = require('./public/resources/model/db.js');
+var messageController = require('./public/resources/controller/messages.js');
 
 //region Server-config
 //Conecta no DataService MongoLab em que o MongoDb está hospedado
@@ -13,19 +13,17 @@ mongoose.connect(MONGOLAB_URI);
 var app = express();
 app.set('port', process.env.PORT || 8080);
 
-//Importação de diretórios para uso de recursos
-app.use(express.static(__dirname + '/'));
-app.use(express.static(__dirname + '/resources'));
-app.use(express.static(__dirname + '/node_modules/socket.io/lib'));
+//Importação do diretório de arquivos estáticos
+app.use(express.static(__dirname + '/public/'));
 
 //Request e response do caminho da página principal
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/public/index.html');
 });
 
 //Request e response do caminho do console
 app.get('/console', function (req, res) {
-	res.sendFile(__dirname + '/console.html');
+	res.sendFile(__dirname + '/public/console.html');
 });
 
 //Mensagens persistidas no MongoDb

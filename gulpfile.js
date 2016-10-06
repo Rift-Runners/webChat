@@ -5,11 +5,18 @@ var gulp       = require('gulp'),
     minify = require('gulp-minify-css'),
     source     = require('vinyl-source-stream');
 
-gulp.task('browserify', function() {
-    return browserify({ entries: ['resources/main.js'] })
+gulp.task('browserify-chat', function() {
+    return browserify({ entries: ['public/resources/main.js'] })
         .bundle()
         .pipe(source('chat.js'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('public/dist'));
+});
+
+gulp.task('browserify-console', function() {
+    return browserify({ entries: ['public/resources/console.js'] })
+        .bundle()
+        .pipe(source('console.js'))
+        .pipe(gulp.dest('public/dist'));
 });
 
 // gulp.task('js', function() {
@@ -19,17 +26,18 @@ gulp.task('browserify', function() {
 //         .pipe(gulp.dest('dist'));
 // });
 
-gulp.task('css', function() {
-    gulp.src(['resources/style.css'])
-        .pipe(concat('styles.css'))
-        .pipe(minify())
-        .pipe(gulp.dest('dist'));
-});
+// gulp.task('css', function() {
+//     gulp.src(['public/resources/style.css'])
+//         .pipe(concat('styles.css'))
+//         .pipe(minify())
+//         .pipe(gulp.dest('public/dist'));
+// });
 
 gulp.task('watch', function() {
-    gulp.watch("./resources/*.css", [ 'css' ]);
-    // gulp.watch("./resources/*.js", [ 'js' ]);
-    gulp.watch("./resources/main.js", [ 'browserify' ]);
+    // gulp.watch("public/resources/*.css", [ 'css' ]);
+    // gulp.watch("public/resources/*.js", [ 'js' ]);
+    gulp.watch("public/resources/main.js", [ 'browserify-chat' ]);
+    gulp.watch("public/resources/console.js", [ 'browserify-console' ]);
 });
 
-gulp.task('default', [ 'watch', 'browserify', 'css' ]);
+gulp.task('default', [ 'watch', 'browserify-chat', 'browserify-console']);

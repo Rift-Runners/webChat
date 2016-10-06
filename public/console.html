@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin console</title>
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.2.3/foundation.min.css">
+    <link rel="stylesheet" href="resources/console.css">
+</head>
+<body class="console">
+<div class="row expanded">
+    <div class="small-12 columns">
+        <p class="text-center title">CONSOLE</p>
+    </div>
+    <fieldset class="small-12 columns" style="padding: 0px 60px;">
+        <legend>Filter by:</legend>
+        <input type="radio" name="field" value="username" id="fieldUsername" checked><label
+            for="fieldUsername">Username</label>
+        <input type="radio" name="field" value="content" id="fieldContent"><label
+            for="fieldContent">Content</label>
+        <input type="radio" name="field" value="date" id="fieldDate"><label for="fieldDate">Date</label>
+    </fieldset>
+    <div class="small-12 columns" style="padding: 0px 60px;">
+        <legend>Input:</legend>
+        <input type="text" id="input-search" placeholder="Insert the desired content">
+    </div>
+    <div class="small-12 columns" style="padding: 0px 60px;">
+        <table id="console-info" class="hidden text-center">
+            <tr>
+                <th>Author</th>
+                <th>Content</th>
+                <th>Date</th>
+            </tr>
+        </table>
+    </div>
+</div>
+<script src="/dist/console.js"></script>
+</body>
+</html>

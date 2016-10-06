@@ -1,0 +1,17 @@
+body{
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+}
+
+.console {
+    height: 100%;
+    background-image: url(images/console.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+.title{
+    font-family: 'Cinzel', serif;
+    font-size: 40px;
+    font-weight: bold;
+}
