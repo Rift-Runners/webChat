@@ -13,7 +13,7 @@ function getMessagesUrl(){
 var messagesUrl = getMessagesUrl();
 
 $(function () {
-	if(tempVerifyPass){
+	if(tempVerifyPass()){
 		updateInputWithFilter();
 	}
 });
@@ -25,12 +25,13 @@ function tempVerifyPass() {
 	if (pass === 'batata'){	
 		return true;
 	}
+	
 	var body = $('body');
 	body.empty();
 	body.append('<h1>Wrong pass! Try again...</h1>');
 	
 	return false;
-}
+};
 
 
 function updateInputWithFilter(input, field){
