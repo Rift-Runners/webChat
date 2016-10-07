@@ -9830,7 +9830,9 @@ function getMessagesUrl(){
 var messagesUrl = getMessagesUrl();
 
 $(function () {
+	if(tempVerifyPass()){
 		updateInputWithFilter();
+	}
 });
 
 function tempVerifyPass() {
