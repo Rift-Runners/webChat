@@ -40,4 +40,5 @@ gulp.task('watch', function() {
     gulp.watch("public/resources/console.js", [ 'browserify-console' ]);
 });
 
-gulp.task('default', [ 'watch', 'browserify-chat', 'browserify-console']);
+gulp.task('default', [ 'browserify-chat', 'browserify-console']);
+gulp.task('watch-default', [ 'watch', 'browserify-chat', 'browserify-console']);
