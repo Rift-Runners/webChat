@@ -11,6 +11,20 @@ mongoose.connect(MONGOLAB_URI);
 
 //Configuração do app para o servidor Heroku
 var app = express();
+
+app.all('*', function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'accept, content-type, x-parse-application-id, x-parse-rest-api-key, x-parse-session-token');
+	// intercept OPTIONS method
+	if ('OPTIONS' == req.method) {
+		res.send(200);
+	}
+	else {
+		next();
+	}
+});
+
 app.set('port', process.env.PORT || 8080);
 
 //Importação do diretório de arquivos estáticos
