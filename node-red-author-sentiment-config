@@ -1,0 +1,149 @@
+[
+    {
+        "id": "c9e62b35.928d28",
+        "type": "tab",
+        "label": "Flow 1"
+    },
+    {
+        "id": "5464ccf2.4dae24",
+        "type": "websocket-client",
+        "z": "",
+        "path": "",
+        "wholemsg": "true"
+    },
+    {
+        "id": "bf958e4f.b84f5",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "http://localhost",
+        "port": "8080",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    },
+    {
+        "id": "3fbf783a.3b9e68",
+        "type": "inject",
+        "z": "c9e62b35.928d28",
+        "name": "Injeção de mensagens",
+        "topic": "Trigger",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 188,
+        "y": 57,
+        "wires": [
+            [
+                "763eaf9.8894d5"
+            ]
+        ]
+    },
+    {
+        "id": "763eaf9.8894d5",
+        "type": "http request",
+        "z": "c9e62b35.928d28",
+        "name": "Request HTTP para as mensagens",
+        "method": "GET",
+        "ret": "obj",
+        "url": "https://ads-webchat.herokuapp.com/messages",
+        "tls": "",
+        "x": 508,
+        "y": 56,
+        "wires": [
+            [
+                "d0d6d9c6.1df9e8"
+            ]
+        ]
+    },
+    {
+        "id": "d0d6d9c6.1df9e8",
+        "type": "function",
+        "z": "c9e62b35.928d28",
+        "name": "Segrega mensagens por usuário",
+        "func": "var msgs = [];\n\nfor(var i = 0; i < msg.payload.length ; i++){\n    var message = {};\n    var hasAuthor = false;\n    \n    for(var j = 0; j < msgs.length; j++){\n        if(msg.payload[i].authorUser.indexOf(msgs[j].authorUser) != -1){\n            msgs[j].payload += \" \"+msg.payload[i].content;\n            hasAuthor = true;\n            break;\n        }\n    }\n    \n    if(!hasAuthor){\n        message.authorUser = msg.payload[i].authorUser;\n        message.date = msg.payload[i].date;\n        message.payload = msg.payload[i].content;\n        \n        msgs.push(message);\n    }\n}\n\nreturn [ msgs ];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 228,
+        "y": 128,
+        "wires": [
+            [
+                "6aaf7682.ebe818"
+            ]
+        ]
+    },
+    {
+        "id": "6aaf7682.ebe818",
+        "type": "sentiment",
+        "z": "c9e62b35.928d28",
+        "name": "Análise de sentimento",
+        "x": 555,
+        "y": 128,
+        "wires": [
+            [
+                "b3e6bc52.c6845"
+            ]
+        ]
+    },
+    {
+        "id": "b3e6bc52.c6845",
+        "type": "function",
+        "z": "c9e62b35.928d28",
+        "name": "Verificar Sentimento e Montar e-mail",
+        "func": "if(msg.sentiment.score < 0){\n    var message = {};\n    message.payload = msg.authorUser + \", você está muito estressadinho, aí vai um vídeo de um catiorineo para esfriar a cabeça.\\nhttps://www.youtube.com/watch?v=QGcACsZtFEM\";\n    message.topic = \"Verificamos que você anda meio raivoso, SR. \"+msg.authorUser + \"!\";\n    message.to = \"insight.webchat@gmail.com\";\n}\n\nif(message){\n    return message;    \n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 234,
+        "y": 204,
+        "wires": [
+            [
+                "f2e6457b.4e9f78"
+            ]
+        ]
+    },
+    {
+        "id": "f2e6457b.4e9f78",
+        "type": "e-mail",
+        "z": "c9e62b35.928d28",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "name": "",
+        "dname": "Avisa que o moleque tá mal",
+        "x": 537,
+        "y": 204,
+        "wires": []
+    },
+    {
+        "id": "ac4c1c95.589a1",
+        "type": "debug",
+        "z": "c9e62b35.928d28",
+        "name": "Debugger de payload",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 559,
+        "y": 295,
+        "wires": []
+    },
+    {
+        "id": "78cf5b8c.35d284",
+        "type": "debug",
+        "z": "c9e62b35.928d28",
+        "name": "Debugger do objeto inteiro",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 261,
+        "y": 301,
+        "wires": []
+    }
+]
