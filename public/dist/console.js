@@ -9817,17 +9817,16 @@ return jQuery;
 },{}],2:[function(require,module,exports){
 var $ = require('jquery');
 
-function getMessagesUrl(){
+var messagesUrl = function getMessagesUrl(){
     var url;
     if((window.location.href).includes("localhost")){
         url = "http://localhost:8080/messages";
     } else {
         url = "https://ads-webchat.herokuapp.com/messages";
     }
+
     return url;
 }
-
-var messagesUrl = getMessagesUrl();
 
 $(function () {
 	if(tempVerifyPass()){

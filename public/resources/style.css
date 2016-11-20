@@ -65,7 +65,7 @@ ul {
     width: 100%;
 }
 
-.login.page .form .usernameInput {
+.login.page .form .emailInput {
     background-color: transparent;
     border: none;
     border-bottom: 1px solid #fff;
@@ -84,13 +84,13 @@ ul {
     text-shadow: rgb(0,0,0) 2px 3px;  
 }
 
-.login.page .usernameInput {
+.login.page .emailInput {
     font-size: 125%;
     font-style: oblique;
     letter-spacing: 2px;
 }
 
-.login.page .title, .login.page .usernameInput {
+.login.page .title, .login.page .emailInput {
     color: white;
     font-weight: 100;
 }

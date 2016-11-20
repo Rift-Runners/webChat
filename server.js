@@ -1,8 +1,8 @@
 //Variáveis da aplicação
 var mongoose = require('mongoose');
 var express = require('express');
-var models = require('./public/resources/model/db.js');
-var messageController = require('./public/resources/controller/messages.js');
+var models = require('./public/resources/model/db');
+var messageController = require('./public/resources/controller/messages');
 
 //region Server-config
 //Conecta no DataService MongoLab em que o MongoDb está hospedado
@@ -53,10 +53,11 @@ server.listen(app.get('port'), function(){
 var io = require('socket.io').listen(server);
 //endregion
 
+//region Socketio-config
+
 //Váriavel que controla o número de usuários conectados
 var numUsers = 0;
 
-//region Socketio-config
 io.on('connection', function(socket) {
 	var addedUser = false;
 
@@ -80,6 +81,7 @@ io.on('connection', function(socket) {
 	//Adiciona um user e compartilha que o mesmo se conectou ao chat
 	socket.on('add user', function(username) {
 		if(addedUser) return;
+
 		addedUser = true;
 		socket.username = username;
 		socket.emit('login', {
