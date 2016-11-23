@@ -12,17 +12,17 @@ mongoose.connect(MONGOLAB_URI);
 //Configuração do app para o servidor Heroku
 var app = express();
 
-app.all('*', function(req, res, next) {
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-	res.header('Access-Control-Allow-Headers', 'accept, content-type, x-parse-application-id, x-parse-rest-api-key, x-parse-session-token');
-	// intercept OPTIONS method
-	if ('OPTIONS' == req.method) {
-		res.send(200);
-	}
-	else {
-		next();
-	}
+app.all('*', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'accept, content-type, x-parse-application-id, x-parse-rest-api-key, x-parse-session-token');
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    }
+    else {
+        next();
+    }
 });
 
 app.set('port', process.env.PORT || 8080);
@@ -32,12 +32,12 @@ app.use(express.static(__dirname + '/public/'));
 
 //Request e response do caminho da página principal
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 //Request e response do caminho do console
 app.get('/console', function (req, res) {
-	res.sendFile(__dirname + '/public/console.html');
+    res.sendFile(__dirname + '/public/console.html');
 });
 
 //Mensagens persistidas no MongoDb
@@ -45,8 +45,8 @@ app.get('/messages', messageController.list);
 
 //Criação do server tanto para o Heroku como local
 var server = require('http').createServer(app);
-server.listen(app.get('port'), function(){
-	console.log('Express server listening on port :' + app.get('port'));
+server.listen(app.get('port'), function () {
+    console.log('Express server listening on port :' + app.get('port'));
 });
 
 //Setando a váriavel io para escutar o server da aplicação
@@ -58,64 +58,71 @@ var io = require('socket.io').listen(server);
 //Váriavel que controla o número de usuários conectados
 var numUsers = 0;
 
-io.on('connection', function(socket) {
-	var addedUser = false;
+io.on('connection', function (socket) {
+    var addedUser = false;
 
-	//Salva uma mensagem que um user escreveu, junto com a data (por default ela é Date.now)
-	socket.on('new message', function(msg){
-		var message = new models.Message({
-			content: msg,
-			authorUser: socket.username
-		});
-		message.save(function(err) {
-			if (err) throw err;
-			console.log(socket.username + ' message saved!');
-		});
+    //Salva uma mensagem que um user escreveu, junto com a data (por default ela é Date.now)
+    socket.on('new message', function (msg) {
+        var message = new models.Message({
+            content: msg,
+            authorUser: socket.username,
+            authorEmail: socket.email
+        });
 
-		socket.broadcast.emit('new message', {
-			username : socket.username,
-			message : msg
-		});
-	});
+        message.save(function (err) {
+            if (err) throw err;
+            console.log(socket.username + ' message saved!');
+        });
 
-	//Adiciona um user e compartilha que o mesmo se conectou ao chat
-	socket.on('add user', function(username) {
-		if(addedUser) return;
+        socket.broadcast.emit('new message', {
+            username: socket.username,
+            message: msg
+        });
 
-		addedUser = true;
-		socket.username = username;
-		socket.emit('login', {
-			numUsers: ++numUsers
-		});
+        console.log(message);
+    });
 
-		socket.broadcast.emit('user joined', {
-			username : socket.username,
-			numUsers : numUsers
-		});
-	});
+    //Adiciona um user e compartilha que o mesmo se conectou ao chat
+    socket.on('add user', function (username) {
+        if (addedUser) return;
 
-	//Compartilha que o user está escrevendo
-	socket.on('typing', function() {
-		socket.broadcast.emit('typing', {
-			username : socket.username
-		});
-	});
+        addedUser = true;
+        socket.username = username.substr(0, username.indexOf('@'));
+        socket.email = username;
+        socket.emit('login', {
+            numUsers: ++numUsers
+        });
 
-	//Compartilha que o user parou de escrever
-	socket.on('stop typing', function() {
-		socket.broadcast.emit('stop typing', {
-			username : socket.username
-		});
-	});
+        socket.broadcast.emit('user joined', {
+            username: socket.username,
+            numUsers: numUsers
+        });
 
-	//Momento em que o user desconecta e avisa ao chat do acontecimento
-	socket.on('disconnect', function() {
-		if(addedUser) {
-			socket.broadcast.emit('user left', {
-				username : socket.username,
-				numUsers : --numUsers
-			});
-		}
-	});
+        console.log(socket.username);
+    });
+
+    //Compartilha que o user está escrevendo
+    socket.on('typing', function () {
+        socket.broadcast.emit('typing', {
+            username: socket.username
+        });
+    });
+
+    //Compartilha que o user parou de escrever
+    socket.on('stop typing', function () {
+        socket.broadcast.emit('stop typing', {
+            username: socket.username
+        });
+    });
+
+    //Momento em que o user desconecta e avisa ao chat do acontecimento
+    socket.on('disconnect', function () {
+        if (addedUser) {
+            socket.broadcast.emit('user left', {
+                username: socket.username,
+                numUsers: --numUsers
+            });
+        }
+    });
 });
 //endregion

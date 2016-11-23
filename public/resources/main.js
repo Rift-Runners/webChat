@@ -1,6 +1,6 @@
 //Chamando o jquery em uma váriavel global
 var $ = require('jquery');
-var firebase = require('./config/firebase-config');
+var firebaseController = require('./config/firebase-config');
 
 //Função responsável por randomizar as cores dos usuários que logarem
 $(function () {
@@ -8,13 +8,13 @@ $(function () {
     var TYPING_TIMER_LENGTH = 400; // ms
     var COLORS = [
         '#e21400', '#91580f', '#f8a700', '#f78b00',
-        '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
+        '#287b00', '#a8f07a', '#4ae8c4',
         '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
     ];
 
     //Criação das váriaveis e inicialização
     var $window = $(window);
-    var $emailInput = $('.emailInput'); // Input for username
+    var $usernameInput = $('.usernameInput'); // Input for username
     var $passwordInput = $('.passwordInput'); // Pass for username
     var $messages = $('.messages'); // Messages area
     var $inputMessage = $('.inputMessage'); // Input message input box
@@ -22,13 +22,12 @@ $(function () {
     var $chatPage = $('.chat.page'); // The chatroom page
 
     // Prompt for setting a username
-    var email;
     var password;
     var username;
     var connected = false;
     var typing = false;
     var lastTypingTime;
-    var $currentInput = $emailInput.focus();
+    var $currentInput = $usernameInput.focus();
 
     //Chamada do socket.io
     var socket = io();
@@ -40,38 +39,30 @@ $(function () {
 
     // Sets the client's username
     function setUsername() {
-        email = cleanInput($emailInput.val().trim());
+        var email = cleanInput($usernameInput.val().trim());
+        username = email.substr(0, email.indexOf('@'));
         password = cleanInput($passwordInput.val().trim());
 
-        console.log(firebase);
+        firebaseController.firebase.auth().signInWithEmailAndPassword(email, password).then(function (user) {
+            var user = firebaseController.firebase.auth().currentUser;
 
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .catch(function (error) {
-                alert(error);
-            });
+            $loginPage.fadeOut();
+            $chatPage.show();
+            $loginPage.off('click');
+            $currentInput = $inputMessage.focus();
 
-        // firebase.auth().createUserWithEmailAndPassword(email, password).then(function (user) {
-        //     var user = firebase.auth().currentUser;
-        //
-        //     console.log(user);
-        //
-        //     // Caso o email e o password forem válidos
-        //     // if (email && password) {
-        //     //     $loginPage.fadeOut();
-        //     //     $chatPage.show();
-        //     //     $loginPage.off('click');
-        //     //     $currentInput = $inputMessage.focus();
-        //     //
-        //     //     // Tell the server your username
-        //     //     socket.emit('add user', username);
-        //     // }
-        // }, function (error) {
-        //     // Handle Errors here.
-        //     var errorCode = error.code;
-        //     var errorMessage = error.message;
-        //
-        //     console.log(errorMessage);
-        // });
+            socket.emit('add user', email);
+        }, function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+
+            if (errorCode === 'auth/wrong-password') {
+                alert('Wrong password.');
+            } else {
+                alert(errorMessage);
+            }
+        });
     }
 
     // Sends a chat message
@@ -220,7 +211,7 @@ $(function () {
         // }
         // When the client hits ENTER on their keyboard
         if (event.which === 13) {
-            if (email) {
+            if (username) {
                 sendMessage();
                 socket.emit('stop typing');
                 typing = false;

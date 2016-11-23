@@ -1,8 +1,9 @@
 var $ = require('jquery');
 
-var messagesUrl = function getMessagesUrl(){
+var messagesUrl = function getMessagesUrl() {
     var url;
-    if((window.location.href).includes("localhost")){
+
+    if ((window.location.href).includes("localhost")) {
         url = "http://localhost:8080/messages";
     } else {
         url = "https://ads-webchat.herokuapp.com/messages";
@@ -12,31 +13,33 @@ var messagesUrl = function getMessagesUrl(){
 }
 
 $(function () {
-	if(tempVerifyPass()){
-		updateInputWithFilter();
-	}
+    if (tempVerifyPass()) {
+        updateInputWithFilter();
+    }
 });
 
 function tempVerifyPass() {
 
-	var pass = prompt("Type in your password", "");
-	
-	if (pass === 'batata'){	
-		return true;
-	}
-	
-	var body = $('body');
-	body.empty();
-	body.append('<h1>Wrong pass! Try again...</h1>');
-	
-	return false;
+    var pass = prompt("Type in your password", "");
+
+    if (pass === 'batata') {
+        return true;
+    }
+
+    var body = $('body');
+    body.empty();
+    body.append('<h1>Wrong pass! Try again...</h1>');
+
+    return false;
 };
 
 
-function updateInputWithFilter(input, field){
+function updateInputWithFilter(input, field) {
+    var loadedUrl = messagesUrl();
+
     $.ajax({
         type: 'GET',
-        url: messagesUrl,
+        url: loadedUrl,
         data: $('#messages').serialize(),
         dataType: "json",
         success: function (data) {
@@ -47,19 +50,19 @@ function updateInputWithFilter(input, field){
                     for (var i = 0; i < len; i++) {
                         $('#console-info').empty();
                         var tableRow = "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + new Date(data[i].date).toGMTString() + "</td></tr>";
-                        switch(field) {
+                        switch (field) {
                             case 'username':
-                                if((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())){
+                                if ((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())) {
                                     txt += tableRow;
                                 }
                                 break;
                             case 'content':
-                                if((data[i].content.toLowerCase()).includes(input.toLowerCase())){
+                                if ((data[i].content.toLowerCase()).includes(input.toLowerCase())) {
                                     txt += tableRow;
                                 }
                                 break;
                             case 'date':
-                                if((data[i].date.toLowerCase()).includes(input.toLowerCase())){
+                                if ((data[i].date.toLowerCase()).includes(input.toLowerCase())) {
                                     txt += tableRow;
                                 }
                                 break;
@@ -75,7 +78,7 @@ function updateInputWithFilter(input, field){
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            alert('error: ' + textStatus + ': ' + errorThrown);
+            alert('error: ' + jqXHR + ': ' + textStatus + ': ' + errorThrown);
         }
     });
     return false;
