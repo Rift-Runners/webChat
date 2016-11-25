@@ -1,1 +1,319 @@
-[{"id":"495bff05.f5a5e","type":"tab","label":"Flow 1"},{"id":"aa13fcaf.ea99e8","type":"inject","z":"495bff05.f5a5e","name":"Injeção de mensagens","topic":"Trigger","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":188,"y":57,"wires":[["92edeb87.dc84f"]]},{"id":"92edeb87.dc84f","type":"http request","z":"495bff05.f5a5e","name":"Request HTTP para as mensagens","method":"GET","ret":"obj","url":"http://ads-webchat.herokuapp.com/messages","tls":"","x":508,"y":56,"wires":[["8cd34b5.d60a8b8"]]},{"id":"8cd34b5.d60a8b8","type":"function","z":"495bff05.f5a5e","name":"Segrega mensagens por usuário","func":"var msgs = [];\n\nfor(var i = 0; i < msg.payload.length ; i++){\n    var message = {};\n    var hasAuthor = false;\n    \n    for(var j = 0; j < msgs.length; j++){\n        if(msg.payload[i].authorUser.indexOf(msgs[j].authorUser) != -1){\n            msgs[j].payload += \" \"+msg.payload[i].content;\n            hasAuthor = true;\n            break;\n        }\n    }\n    \n    if(!hasAuthor){\n        message.authorUser = msg.payload[i].authorUser;\n        message.authorEmail = msg.payload[i].authorEmail;\n        message.date = msg.payload[i].date;\n        message.payload = msg.payload[i].content;\n        \n        msgs.push(message);\n    }\n}\n\nreturn [ msgs ];","outputs":1,"noerr":0,"x":228,"y":128,"wires":[["c4bc38dd.bab7b8"]]},{"id":"c4bc38dd.bab7b8","type":"sentiment","z":"495bff05.f5a5e","name":"Análise de sentimento","x":555,"y":128,"wires":[["2b6d0f2b.e283e","384b2940.f6898e"]]},{"id":"2b6d0f2b.e283e","type":"function","z":"495bff05.f5a5e","name":"Verificar Sentimento e Montar e-mail","func":"if(msg.sentiment.score < -2){\n    var message = {};\n    message.payload = msg.authorUser + \", você está muito estressadinho, aí vai um vídeo de um catiorineo para esfriar a cabeça.\\nhttps://www.youtube.com/watch?v=QGcACsZtFEM\";\n    message.topic = \"Verificamos que você anda meio raivoso, SR. \"+msg.authorUser + \"!\";\n    message.to = msg.authorEmail;\n}\n\nif(message){\n    return message;    \n}","outputs":1,"noerr":0,"x":196,"y":270,"wires":[["c968638.39b7f2"]]},{"id":"8b6853e4.30e16","type":"e-mail","z":"495bff05.f5a5e","server":"smtp.gmail.com","port":"465","name":"","dname":"Avisa que o moleque tá mal","x":647,"y":331,"wires":[]},{"id":"a1f2a9bb.a7a53","type":"debug","z":"495bff05.f5a5e","name":"Debugger de payload","active":true,"console":"false","complete":"payload","x":475,"y":391,"wires":[]},{"id":"c968638.39b7f2","type":"debug","z":"495bff05.f5a5e","name":"Debugger do objeto inteiro","active":true,"console":"false","complete":"true","x":238,"y":437,"wires":[]},{"id":"5901738f.1d1194","type":"serial out","z":"495bff05.f5a5e","name":"Output do Arduino","serial":"be7810a7.17f818","x":656,"y":509,"wires":[]},{"id":"384b2940.f6898e","type":"function","z":"495bff05.f5a5e","name":"Repasse de valor de sentimento","func":"var valorFinal = {};\n\nvalorFinal.payload = msg.sentiment.score;\n\nreturn valorFinal;","outputs":1,"noerr":0,"x":492,"y":250,"wires":[["a1f2a9bb.a7a53"]]},{"id":"be7810a7.17f818","type":"serial-port","z":"","serialport":"COM3","serialbaud":"9600","databits":"8","parity":"none","stopbits":"1","newline":"\\n","bin":"false","out":"char","addchar":false}]
+[
+    {
+        "id": "6d441916.959d38",
+        "type": "tab",
+        "label": "Flow 1"
+    },
+    {
+        "id": "4127c558.5d145c",
+        "type": "twitter-credentials",
+        "z": "",
+        "screen_name": "@DiPeixoto"
+    },
+    {
+        "id": "fb262369.587ad",
+        "type": "twitter-credentials",
+        "z": "",
+        "screen_name": "@DiPeixoto"
+    },
+    {
+        "id": "63b2883f.102d28",
+        "type": "websocket-client",
+        "z": "",
+        "path": "http://ads-webchat.herokuapp.com/",
+        "wholemsg": "true"
+    },
+    {
+        "id": "c915f836.ce9688",
+        "type": "websocket-listener",
+        "z": "",
+        "path": "http://ads-webchat.herokuapp.com/",
+        "wholemsg": "false"
+    },
+    {
+        "id": "8bcaba8e.3b3c58",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "http://ads-webchat.herokuapp.com/",
+        "port": "",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    },
+    {
+        "id": "86ae2c51.0499b",
+        "type": "websocket-listener",
+        "z": "",
+        "path": "http://ads-webchat.herokuapp.com/",
+        "wholemsg": "true"
+    },
+    {
+        "id": "696bc36.abd1d3c",
+        "type": "websocket-client",
+        "z": "",
+        "path": "",
+        "wholemsg": "true"
+    },
+    {
+        "id": "559572e8.b7e98c",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "http://localhost",
+        "port": "8080",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    },
+    {
+        "id": "e2363dad.b0996",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "ec08e13.9328d2",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "5b3f8cd6.600844",
+        "type": "inject",
+        "z": "6d441916.959d38",
+        "name": "Injeção de mensagens",
+        "topic": "Trigger",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "3600",
+        "crontab": "",
+        "once": true,
+        "x": 161,
+        "y": 65,
+        "wires": [
+            [
+                "6db4a1bc.3ee24"
+            ]
+        ]
+    },
+    {
+        "id": "6db4a1bc.3ee24",
+        "type": "http request",
+        "z": "6d441916.959d38",
+        "name": "Request HTTP para as mensagens",
+        "method": "GET",
+        "ret": "obj",
+        "url": "https://ads-webchat.herokuapp.com/messages",
+        "tls": "",
+        "x": 203,
+        "y": 126,
+        "wires": [
+            [
+                "65438a5a.856754"
+            ]
+        ]
+    },
+    {
+        "id": "65438a5a.856754",
+        "type": "function",
+        "z": "6d441916.959d38",
+        "name": "Segrega mensagens por usuário",
+        "func": "var msgs = [];\n\nfor(var i = 0; i < msg.payload.length ; i++){\n    var message = {};\n    var hasAuthor = false;\n    \n    for(var j = 0; j < msgs.length; j++){\n        if(msg.payload[i].authorUser.indexOf(msgs[j].authorUser) != -1){\n            msgs[j].payload += \" \"+msg.payload[i].content;\n            hasAuthor = true;\n            break;\n        }\n    }\n    \n    if(!hasAuthor){\n        message.authorUser = msg.payload[i].authorUser;\n        message.authorEmail = msg.payload[i].authorEmail;\n        message.date = msg.payload[i].date;\n        message.payload = msg.payload[i].content;\n        \n        msgs.push(message);\n    }\n}\n\nreturn [ msgs ];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 196,
+        "y": 191,
+        "wires": [
+            [
+                "3d4b7c7c.fd0624"
+            ]
+        ]
+    },
+    {
+        "id": "3d4b7c7c.fd0624",
+        "type": "sentiment",
+        "z": "6d441916.959d38",
+        "name": "Análise de sentimento",
+        "x": 562,
+        "y": 199,
+        "wires": [
+            [
+                "ffdbbfcd.f9a7"
+            ]
+        ]
+    },
+    {
+        "id": "ffdbbfcd.f9a7",
+        "type": "function",
+        "z": "6d441916.959d38",
+        "name": "Verificar Sentimento e Montar e-mail",
+        "func": "if(msg.sentiment.score < -2){\n    var message = {};\n    message.payload = msg.authorUser + \", você está muito estressadinho, aí vai um vídeo de um catiorineo para esfriar a cabeça.\\nhttps://www.youtube.com/watch?v=QGcACsZtFEM\";\n    message.topic = \"Verificamos que você anda meio raivoso, SR. \"+msg.authorUser + \"!\";\n    message.to = msg.authorEmail;\n}\n\nif(message){\n    return message;    \n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 589,
+        "y": 126,
+        "wires": [
+            [
+                "66b816c4.f3c108"
+            ]
+        ]
+    },
+    {
+        "id": "66b816c4.f3c108",
+        "type": "e-mail",
+        "z": "6d441916.959d38",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "name": "",
+        "dname": "Avisa que o moleque tá mal",
+        "x": 569,
+        "y": 53,
+        "wires": []
+    },
+    {
+        "id": "4338adb3.ef4de4",
+        "type": "debug",
+        "z": "6d441916.959d38",
+        "name": "Debugger de payload",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 207,
+        "y": 677,
+        "wires": []
+    },
+    {
+        "id": "2557d46a.d7eaac",
+        "type": "debug",
+        "z": "6d441916.959d38",
+        "name": "Debugger do objeto inteiro",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 185,
+        "y": 722,
+        "wires": []
+    },
+    {
+        "id": "35c16ed2.f80e32",
+        "type": "serial out",
+        "z": "6d441916.959d38",
+        "name": "Arduino",
+        "serial": "ec08e13.9328d2",
+        "x": 536,
+        "y": 502,
+        "wires": []
+    },
+    {
+        "id": "afa5fcf8.2afb7",
+        "type": "inject",
+        "z": "6d441916.959d38",
+        "name": "Injeção de sentimentos arduino",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "x": 189,
+        "y": 502,
+        "wires": [
+            [
+                "7bff5866.55e5d8"
+            ]
+        ]
+    },
+    {
+        "id": "7bff5866.55e5d8",
+        "type": "http request",
+        "z": "6d441916.959d38",
+        "name": "Resquest HTTP para o Arduino",
+        "method": "GET",
+        "ret": "obj",
+        "url": "https://ads-webchat.herokuapp.com/messages",
+        "tls": "",
+        "x": 193,
+        "y": 442,
+        "wires": [
+            [
+                "59b8da9c.1661d4"
+            ]
+        ]
+    },
+    {
+        "id": "59b8da9c.1661d4",
+        "type": "function",
+        "z": "6d441916.959d38",
+        "name": "Segrega mensagens por usuário",
+        "func": "var msgs = [];\n\nfor(var i = 0; i < msg.payload.length ; i++){\n    var message = {};\n    var hasAuthor = false;\n    \n    for(var j = 0; j < msgs.length; j++){\n        if(msg.payload[i].authorUser.indexOf(msgs[j].authorUser) != -1){\n            msgs[j].payload += \" \"+msg.payload[i].content;\n            hasAuthor = true;\n            break;\n        }\n    }\n    \n    if(!hasAuthor){\n        message.authorUser = msg.payload[i].authorUser;\n        message.authorEmail = msg.payload[i].authorEmail;\n        message.date = msg.payload[i].date;\n        message.payload = msg.payload[i].content;\n        \n        msgs.push(message);\n    }\n}\n\nreturn [ msgs ];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 196,
+        "y": 382,
+        "wires": [
+            [
+                "1ed5e782.018ed8"
+            ]
+        ]
+    },
+    {
+        "id": "1ed5e782.018ed8",
+        "type": "sentiment",
+        "z": "6d441916.959d38",
+        "name": "Análise de sentimento",
+        "x": 506,
+        "y": 382,
+        "wires": [
+            [
+                "a142a3cf.c7303"
+            ]
+        ]
+    },
+    {
+        "id": "a142a3cf.c7303",
+        "type": "function",
+        "z": "6d441916.959d38",
+        "name": "Repasse de valor de sentimento",
+        "func": "var valorFinal = {};\n\nvalorFinal.payload = msg.sentiment.score;\n\nreturn valorFinal;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 545,
+        "y": 437,
+        "wires": [
+            [
+                "35c16ed2.f80e32"
+            ]
+        ]
+    }
+]
