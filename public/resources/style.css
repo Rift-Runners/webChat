@@ -75,6 +75,16 @@ ul {
     width: 400px;
 }
 
+.login.page .form .passwordInput {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #fff;
+    outline: none;
+    padding-bottom: 5px;
+    text-align: center;
+    width: 400px;
+}
+
 .login.page .title {
     font-size: 300%;
     font-family: monospace;
@@ -90,11 +100,21 @@ ul {
     letter-spacing: 2px;
 }
 
+.login.page .passwordInput {
+    font-size: 125%;
+    font-style: oblique;
+    letter-spacing: 2px;
+}
+
 .login.page .title, .login.page .usernameInput {
     color: white;
     font-weight: 100;
 }
 
+.login.page .title, .login.page .passwordInput {
+    color: white;
+    font-weight: 100;
+}
 /* Chat page */
 
 .chat.page {
