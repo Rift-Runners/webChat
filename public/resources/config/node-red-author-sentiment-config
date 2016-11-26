@@ -243,7 +243,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "repeat": "1",
+        "repeat": "3",
         "crontab": "",
         "once": true,
         "x": 189,
