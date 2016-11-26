@@ -70,6 +70,7 @@ ul {
     border: none;
     border-bottom: 1px solid #fff;
     outline: none;
+	padding-top: 30px;
     padding-bottom: 5px;
     text-align: center;
     width: 400px;
@@ -86,7 +87,14 @@ ul {
 }
 
 .login.page .title {
-    font-size: 300%;
+    font-size: 400%;
+    font-family: monospace;
+}
+
+.login.page .subTitle {
+	color: white;
+    font-size: 200%;
+	 font-weight: 100;
     font-family: monospace;
 }
 
