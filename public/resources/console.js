@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var dt = require( 'datatables.net' )( window, $ );
 
 var messagesUrl = function getMessagesUrl() {
     var url;
@@ -14,7 +15,17 @@ var messagesUrl = function getMessagesUrl() {
 
 $(function () {
     if (tempVerifyPass()) {
-        updateInputWithFilter();
+        var ok = updateInputWithFilter('','');
+        console.log(ok);
+        $('#console-info').DataTable({
+            "ajax": ok,
+            "columns": [
+            { "authorUser": "Author" },
+            { "authorEmail": "E-mail" },
+            { "content": "Content" },
+            { "date": "Date" }
+        ]
+        });
     }
 });
 
@@ -36,53 +47,55 @@ function tempVerifyPass() {
 
 function updateInputWithFilter(input, field) {
     var loadedUrl = messagesUrl();
+    var messagesJSON;
 
     $.ajax({
         type: 'GET',
         url: loadedUrl,
-        data: $('#messages').serialize(),
-        dataType: "json",
         success: function (data) {
-            if (data) {
-                var len = data.length;
-                var txt = '<tr><th>Author</th><th>Content</th><th>Date</th></tr>';
-                if (len > 0) {
-                    for (var i = 0; i < len; i++) {
-                        $('#console-info').empty();
-                        var tableRow = "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + new Date(data[i].date).toGMTString() + "</td></tr>";
-                        switch (field) {
-                            case 'username':
-                                if ((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())) {
-                                    txt += tableRow;
-                                }
-                                break;
-                            case 'content':
-                                if ((data[i].content.toLowerCase()).includes(input.toLowerCase())) {
-                                    txt += tableRow;
-                                }
-                                break;
-                            case 'date':
-                                if ((data[i].date.toLowerCase()).includes(input.toLowerCase())) {
-                                    txt += tableRow;
-                                }
-                                break;
-                            default:
-                                txt += tableRow;
-                                break;
-                        }
-                    }
-                    if (txt != "") {
-                        $("#console-info").append(txt).removeClass("hidden");
-                    }
-                }
-            }
+            messagesJSON = data;
+
+            // if (data) {
+            //     var len = data.length;
+            //     var txt = '<tr><th>Author</th><th>Content</th><th>Date</th></tr>';
+            //     if (len > 0) {
+            //         for (var i = 0; i < len; i++) {
+            //             $('#console-info').empty();
+            //             var tableRow = "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + new Date(data[i].date).toGMTString() + "</td></tr>";
+            //             switch (field) {
+            //                 case 'username':
+            //                     if ((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())) {
+            //                         txt += tableRow;
+            //                     }
+            //                     break;
+            //                 case 'content':
+            //                     if ((data[i].content.toLowerCase()).includes(input.toLowerCase())) {
+            //                         txt += tableRow;
+            //                     }
+            //                     break;
+            //                 case 'date':
+            //                     if ((data[i].date.toLowerCase()).includes(input.toLowerCase())) {
+            //                         txt += tableRow;
+            //                     }
+            //                     break;
+            //                 default:
+            //                     txt += tableRow;
+            //                     break;
+            //             }
+            //         }
+            //         if (txt != "") {
+            //             $("#console-info").append(txt).removeClass("hidden");
+            //         }
+            //     }
+            // }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             alert('error: ' + jqXHR + ': ' + textStatus + ': ' + errorThrown);
         }
     });
-    return false;
-};
+
+    return messagesJSON;
+}
 
 $('#input-search').on('keyup', function () {
     updateInputWithFilter($('#input-search').val(), $('input:checked').val());

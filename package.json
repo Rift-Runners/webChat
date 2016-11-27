@@ -11,6 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "browserify": "^13.1.0",
+    "datatables.net": "^1.10.12",
+    "datatables.net-bs": "^1.10.12",
     "express": "^4.14.0",
     "firebase": "^3.6.1",
     "jquery": "^2.2.4",
