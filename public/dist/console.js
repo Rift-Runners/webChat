@@ -1,4 +1,187 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! DataTables Bootstrap 3 integration
+ * ©2011-2015 SpryMedia Ltd - datatables.net/license
+ */
+
+/**
+ * DataTables integration for Bootstrap 3. This requires Bootstrap 3 and
+ * DataTables 1.10 or newer.
+ *
+ * This file sets the defaults and adds options to DataTables to style its
+ * controls using Bootstrap. See http://datatables.net/manual/styling/bootstrap
+ * for further information.
+ */
+(function( factory ){
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( ['jquery', 'datatables.net'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+		// CommonJS
+		module.exports = function (root, $) {
+			if ( ! root ) {
+				root = window;
+			}
+
+			if ( ! $ || ! $.fn.dataTable ) {
+				// Require DataTables, which attaches to jQuery, including
+				// jQuery if needed and have a $ property so we can access the
+				// jQuery object that is used
+				$ = require('datatables.net')(root, $).$;
+			}
+
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+		// Browser
+		factory( jQuery, window, document );
+	}
+}(function( $, window, document, undefined ) {
+'use strict';
+var DataTable = $.fn.dataTable;
+
+
+/* Set the defaults for DataTables initialisation */
+$.extend( true, DataTable.defaults, {
+	dom:
+		"<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+		"<'row'<'col-sm-12'tr>>" +
+		"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+	renderer: 'bootstrap'
+} );
+
+
+/* Default class modification */
+$.extend( DataTable.ext.classes, {
+	sWrapper:      "dataTables_wrapper form-inline dt-bootstrap",
+	sFilterInput:  "form-control input-sm",
+	sLengthSelect: "form-control input-sm",
+	sProcessing:   "dataTables_processing panel panel-default"
+} );
+
+
+/* Bootstrap paging button renderer */
+DataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, buttons, page, pages ) {
+	var api     = new DataTable.Api( settings );
+	var classes = settings.oClasses;
+	var lang    = settings.oLanguage.oPaginate;
+	var aria = settings.oLanguage.oAria.paginate || {};
+	var btnDisplay, btnClass, counter=0;
+
+	var attach = function( container, buttons ) {
+		var i, ien, node, button;
+		var clickHandler = function ( e ) {
+			e.preventDefault();
+			if ( !$(e.currentTarget).hasClass('disabled') && api.page() != e.data.action ) {
+				api.page( e.data.action ).draw( 'page' );
+			}
+		};
+
+		for ( i=0, ien=buttons.length ; i<ien ; i++ ) {
+			button = buttons[i];
+
+			if ( $.isArray( button ) ) {
+				attach( container, button );
+			}
+			else {
+				btnDisplay = '';
+				btnClass = '';
+
+				switch ( button ) {
+					case 'ellipsis':
+						btnDisplay = '&#x2026;';
+						btnClass = 'disabled';
+						break;
+
+					case 'first':
+						btnDisplay = lang.sFirst;
+						btnClass = button + (page > 0 ?
+							'' : ' disabled');
+						break;
+
+					case 'previous':
+						btnDisplay = lang.sPrevious;
+						btnClass = button + (page > 0 ?
+							'' : ' disabled');
+						break;
+
+					case 'next':
+						btnDisplay = lang.sNext;
+						btnClass = button + (page < pages-1 ?
+							'' : ' disabled');
+						break;
+
+					case 'last':
+						btnDisplay = lang.sLast;
+						btnClass = button + (page < pages-1 ?
+							'' : ' disabled');
+						break;
+
+					default:
+						btnDisplay = button + 1;
+						btnClass = page === button ?
+							'active' : '';
+						break;
+				}
+
+				if ( btnDisplay ) {
+					node = $('<li>', {
+							'class': classes.sPageButton+' '+btnClass,
+							'id': idx === 0 && typeof button === 'string' ?
+								settings.sTableId +'_'+ button :
+								null
+						} )
+						.append( $('<a>', {
+								'href': '#',
+								'aria-controls': settings.sTableId,
+								'aria-label': aria[ button ],
+								'data-dt-idx': counter,
+								'tabindex': settings.iTabIndex
+							} )
+							.html( btnDisplay )
+						)
+						.appendTo( container );
+
+					settings.oApi._fnBindAction(
+						node, {action: button}, clickHandler
+					);
+
+					counter++;
+				}
+			}
+		}
+	};
+
+	// IE9 throws an 'unknown error' if document.activeElement is used
+	// inside an iframe or frame. 
+	var activeEl;
+
+	try {
+		// Because this approach is destroying and recreating the paging
+		// elements, focus is lost on the select button which is bad for
+		// accessibility. So we want to restore focus once the draw has
+		// completed
+		activeEl = $(host).find(document.activeElement).data('dt-idx');
+	}
+	catch (e) {}
+
+	attach(
+		$(host).empty().html('<ul class="pagination"/>').children('ul'),
+		buttons
+	);
+
+	if ( activeEl ) {
+		$(host).find( '[data-dt-idx='+activeEl+']' ).focus();
+	}
+};
+
+
+return DataTable;
+}));
+},{"datatables.net":2}],2:[function(require,module,exports){
 /*! DataTables 1.10.12
  * ©2008-2015 SpryMedia Ltd - datatables.net/license
  */
@@ -15277,7 +15460,7 @@
 	return $.fn.dataTable;
 }));
 
-},{"jquery":2}],2:[function(require,module,exports){
+},{"jquery":3}],3:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -25093,9 +25276,9 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery');
-var dt = require( 'datatables.net' )( window, $ );
+var dt = require('datatables.net-bs')(window, $);
 
 var messagesUrl = function getMessagesUrl() {
     var url;
@@ -25111,22 +25294,11 @@ var messagesUrl = function getMessagesUrl() {
 
 $(function () {
     if (tempVerifyPass()) {
-        var ok = updateInputWithFilter('','');
-        console.log(ok);
-        $('#console-info').DataTable({
-            "ajax": ok,
-            "columns": [
-            { "authorUser": "Author" },
-            { "authorEmail": "E-mail" },
-            { "content": "Content" },
-            { "date": "Date" }
-        ]
-        });
+        getMessages();
     }
 });
 
 function tempVerifyPass() {
-
     var pass = prompt("Type in your password", "");
 
     if (pass === 'batata') {
@@ -25138,66 +25310,42 @@ function tempVerifyPass() {
     body.append('<h1>Wrong pass! Try again...</h1>');
 
     return false;
-};
+}
 
-
-function updateInputWithFilter(input, field) {
+function getMessages() {
     var loadedUrl = messagesUrl();
-    var messagesJSON;
 
     $.ajax({
         type: 'GET',
         url: loadedUrl,
-        success: function (data) {
-            messagesJSON = data;
+        success: function (response) {
+            console.log(response);
 
-            // if (data) {
-            //     var len = data.length;
-            //     var txt = '<tr><th>Author</th><th>Content</th><th>Date</th></tr>';
-            //     if (len > 0) {
-            //         for (var i = 0; i < len; i++) {
-            //             $('#console-info').empty();
-            //             var tableRow = "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + new Date(data[i].date).toGMTString() + "</td></tr>";
-            //             switch (field) {
-            //                 case 'username':
-            //                     if ((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 case 'content':
-            //                     if ((data[i].content.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 case 'date':
-            //                     if ((data[i].date.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 default:
-            //                     txt += tableRow;
-            //                     break;
-            //             }
-            //         }
-            //         if (txt != "") {
-            //             $("#console-info").append(txt).removeClass("hidden");
-            //         }
-            //     }
-            // }
+            $('#console-info').DataTable({
+                data: response,
+                "columns": [
+                    {
+                        "data": "authorEmail",
+                        title: "Email"
+                    },
+                    {
+                        "data": "authorUser",
+                        title: "User"
+                    },
+                    {
+                        "data": "content",
+                        title: "Message content"
+                    },
+                    {
+                        "data": "date",
+                        title: "Date"
+                    }
+                ]
+            });
         },
         error: function (jqXHR, textStatus, errorThrown) {
             alert('error: ' + jqXHR + ': ' + textStatus + ': ' + errorThrown);
         }
     });
-
-    return messagesJSON;
 }
-
-$('#input-search').on('keyup', function () {
-    updateInputWithFilter($('#input-search').val(), $('input:checked').val());
-});
-
-$('#fieldUsername, #fieldContent, #fieldDate').on('click', function () {
-    updateInputWithFilter($('#input-search').val(), $('input:checked').val());
-});
-},{"datatables.net":1,"jquery":2}]},{},[3]);
+},{"datatables.net-bs":1,"jquery":3}]},{},[4]);

@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var dt = require( 'datatables.net' )( window, $ );
+var dt = require('datatables.net-bs')(window, $);
 
 var messagesUrl = function getMessagesUrl() {
     var url;
@@ -15,22 +15,11 @@ var messagesUrl = function getMessagesUrl() {
 
 $(function () {
     if (tempVerifyPass()) {
-        var ok = updateInputWithFilter('','');
-        console.log(ok);
-        $('#console-info').DataTable({
-            "ajax": ok,
-            "columns": [
-            { "authorUser": "Author" },
-            { "authorEmail": "E-mail" },
-            { "content": "Content" },
-            { "date": "Date" }
-        ]
-        });
+        getMessages();
     }
 });
 
 function tempVerifyPass() {
-
     var pass = prompt("Type in your password", "");
 
     if (pass === 'batata') {
@@ -42,65 +31,41 @@ function tempVerifyPass() {
     body.append('<h1>Wrong pass! Try again...</h1>');
 
     return false;
-};
+}
 
-
-function updateInputWithFilter(input, field) {
+function getMessages() {
     var loadedUrl = messagesUrl();
-    var messagesJSON;
 
     $.ajax({
         type: 'GET',
         url: loadedUrl,
-        success: function (data) {
-            messagesJSON = data;
+        success: function (response) {
+            console.log(response);
 
-            // if (data) {
-            //     var len = data.length;
-            //     var txt = '<tr><th>Author</th><th>Content</th><th>Date</th></tr>';
-            //     if (len > 0) {
-            //         for (var i = 0; i < len; i++) {
-            //             $('#console-info').empty();
-            //             var tableRow = "<tr><td>" + data[i].authorUser + "</td><td>" + data[i].content + "</td><td>" + new Date(data[i].date).toGMTString() + "</td></tr>";
-            //             switch (field) {
-            //                 case 'username':
-            //                     if ((data[i].authorUser.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 case 'content':
-            //                     if ((data[i].content.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 case 'date':
-            //                     if ((data[i].date.toLowerCase()).includes(input.toLowerCase())) {
-            //                         txt += tableRow;
-            //                     }
-            //                     break;
-            //                 default:
-            //                     txt += tableRow;
-            //                     break;
-            //             }
-            //         }
-            //         if (txt != "") {
-            //             $("#console-info").append(txt).removeClass("hidden");
-            //         }
-            //     }
-            // }
+            $('#console-info').DataTable({
+                data: response,
+                "columns": [
+                    {
+                        "data": "authorEmail",
+                        title: "Email"
+                    },
+                    {
+                        "data": "authorUser",
+                        title: "User"
+                    },
+                    {
+                        "data": "content",
+                        title: "Message content"
+                    },
+                    {
+                        "data": "date",
+                        title: "Date"
+                    }
+                ]
+            });
         },
         error: function (jqXHR, textStatus, errorThrown) {
             alert('error: ' + jqXHR + ': ' + textStatus + ': ' + errorThrown);
         }
     });
-
-    return messagesJSON;
 }
-
-$('#input-search').on('keyup', function () {
-    updateInputWithFilter($('#input-search').val(), $('input:checked').val());
-});
-
-$('#fieldUsername, #fieldContent, #fieldDate').on('click', function () {
-    updateInputWithFilter($('#input-search').val(), $('input:checked').val());
-});
