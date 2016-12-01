@@ -1,0 +1,108 @@
+[
+    {
+        "id": "a292613b.d8ee7",
+        "type": "firebase.once",
+        "z": "21d94d78.a0b712",
+        "name": "Captura Firebase FAMA",
+        "firebaseconfig": "",
+        "childpath": "channels/-KXonyrzd8oq0oHUl7lc/messages/",
+        "repeatifnull": false,
+        "eventType": "value",
+        "queries": [],
+        "x": 456,
+        "y": 78,
+        "wires": [
+            [
+                "a85d3bb4.00add8"
+            ]
+        ]
+    },
+    {
+        "id": "20622a37.512cb6",
+        "type": "inject",
+        "z": "21d94d78.a0b712",
+        "name": "Injeção de mensagens do FAMA",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 167,
+        "y": 79,
+        "wires": [
+            [
+                "a292613b.d8ee7"
+            ]
+        ]
+    },
+    {
+        "id": "a85d3bb4.00add8",
+        "type": "function",
+        "z": "21d94d78.a0b712",
+        "name": "Leitura de mensagens da pessoa selecioanda",
+        "func": "var textPersonMap = {};\n\nfor(var key in msg.payload) {\n    var contentPackage = msg.payload[key];\n    var author = contentPackage.senderName;\n    var message = contentPackage.text;\n    if(!textPersonMap[author]){\n        textPersonMap[author] = \"\";\n    }\n    textPersonMap[author] += \" \"+message;\n}\n\nvar parsedNodeRedObject = {\n    author : \"Tainara\",\n    payload : textPersonMap[\"Tainara\"]\n}\n\nreturn parsedNodeRedObject;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 286,
+        "y": 161,
+        "wires": [
+            [
+                "d1c37da2.7e34d"
+            ]
+        ]
+    },
+    {
+        "id": "d1c37da2.7e34d",
+        "type": "sentiment",
+        "z": "21d94d78.a0b712",
+        "name": "Análise de sentimento",
+        "x": 646,
+        "y": 162,
+        "wires": [
+            [
+                "595eeadd.5cc5d4"
+            ]
+        ]
+    },
+    {
+        "id": "595eeadd.5cc5d4",
+        "type": "function",
+        "z": "21d94d78.a0b712",
+        "name": "Repasse de valor de sentimento",
+        "func": "var valorFinal = {};\n\nvalorFinal.payload = msg.sentiment.score;\n\nreturn valorFinal;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 275,
+        "y": 278,
+        "wires": [
+            [
+                "c6ed787e.57c298"
+            ]
+        ]
+    },
+    {
+        "id": "c6ed787e.57c298",
+        "type": "serial out",
+        "z": "21d94d78.a0b712",
+        "name": "Arduino",
+        "serial": "90f19e0f.d890f",
+        "x": 664,
+        "y": 277,
+        "wires": []
+    },
+    {
+        "id": "90f19e0f.d890f",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    }
+]
