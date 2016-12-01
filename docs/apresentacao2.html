@@ -1,0 +1,180 @@
+<html>
+<head>
+    <title>inSight Webchat</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/league.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section data-background="#262727"><h1>inSight Webchat</h1></section>
+        <section>
+            <h2>Definição</h2>
+            <section>
+                <p class="fragment fade-down">Chat em NodeJS acessível pela web a qualquer momento;</p>
+                <p class="fragment fade-down">Envia e recebe mensagens de <span class="fragment highlight-red"><i>n</i></span>
+                    usuários dentro da aplicação;</p>
+                <p class="fragment fade-down">Usuário autenticado através do <span class="fragment highlight-red">Firebase</span>
+                    utilizando o padrão <span class="fragment highlight-green">OAuth2.0</span>;</p>
+                <p class="fragment fade-down">Cada mensagem é gravada com seu <span class="fragment highlight-red">usuário, conteúdo e data</span>
+                    <span class="fragment fade-down">e está atualizando um <span
+                            class="fragment highlight-red">banco de dados</span> disponibilizado na nuvem.
+                </span>
+                </p>
+            </section>
+        </section>
+        <section>
+            <h2>Technology Stack</h2>
+            <section>
+                <p class="fragment fade-down">Server side - <span class="fragment">Node.js</span></p>
+                <p class="fragment fade-down">Database - <span class="fragment">MongoDB</span></p>
+                <p class="fragment fade-down">Client side - <span class="fragment">Vanilla JS e jQuery</span></p>
+                <p class="fragment fade-down"><span class="fragment highlight-blue">IoT - <span class="fragment">Arduino Uno</span></span>
+                </p>
+            </section>
+        </section>
+        <section>
+            <h2>Frameworks e Libs</h2>
+            <section>
+                <p class="fragment fade-down">Express <span class="fragment highlight-green">(HTTP)</span> e Socket.io
+                    <span class="fragment highlight-green">(Tempo real)</span></p>
+                <p class="fragment fade-down">mLab <span class="fragment highlight-green">(DBaaS)</span></p>
+                <p class="fragment fade-down">Heroku <span class="fragment highlight-green">(PaaS)</span></p>
+                <p class="fragment fade-down">Gulp, Browserify e Mongoose</p>
+                <p class="fragment fade-down"><span class="fragment highlight-red">Node-red, Node-red-contrib-firebase e Arduino IDE (C++)</span>
+                </p>
+            </section>
+        </section>
+        <section>
+            <h2>Ambiente de Desenvolvimento</h2>
+            <section>
+                <p class="fragment fade-up">Desenvolvido e disponibilizado no <span class="fragment highlight-blue">Github</span>
+                </p>
+                <p class="fragment fade-up">É necessário possuir as ferramentas: <span class="fragment highlight-blue">git, bash e nodejs (+npm)</span>
+                </p>
+                <p class="fragment fade-up">Com o bash aberto, digite:</p>
+                <p class="fragment fade-up"><span class="fragment highlight-red">git clone https://github.com/Rift-Runners/webChat</span>
+                </p>
+                <p class="fragment fade-up">Entre na pasta baixada e, ainda dentro do bash: </p>
+                <p class="fragment fade-up"><span class="fragment highlight-red">npm install</span></p>
+            </section>
+        </section>
+        <section>
+            <h2>Ambiente de Desenvolvimento</h2>
+            <section>
+                <p class="fragment fade-up">Abra um novo bash e insira: </p>
+                <p class="fragment fade-up"><span class="fragment highlight-red">npm install -g node-red node-red-contrib-firebase</span>
+                </p>
+                <p class="fragment fade-up">Por fim, você necessitará estar executando em dois bash(es) diferentes: </p>
+                <p class="fragment fade-up"><span class="fragment highlight-red">node-red</span></p>
+                <p class="fragment fade-up">E: </p>
+                <p class="fragment fade-up"><span class="fragment highlight-red">gulp default-watch</span></p>
+            </section>
+        </section>
+        <section>
+            <h2>Inicializando a aplicação localmente</h2>
+            <section>
+                <p class="fragment fade-up">Em bash(es) diferentes, entre na pasta do projeto e digite:</p>
+                <p class="fragment fade-up"><span class="fragment highlight-green">npm start</span></p>
+                <p class="fragment fade-up">E:</p>
+                <p class="fragment fade-up"><span class="fragment highlight-green">node-red</span></p>
+                <p class="fragment fade-up">A aplicação iniciará (por default) em <span
+                        class="fragment highlight-green">localhost:8080</span> e os fluxos do node-red em
+                    <span class="fragment highlight-green">localhost:1880</span></p>
+            </section>
+        </section>
+        <section>
+            <h2>Subindo na nuvem (Heroku)</h2>
+            <section>
+                <p class="fragment fade-up">Criar "Procfile" (arquivo Heroku)</p>
+                <p class="fragment fade-up">Subir a aplicação pelo Heroku CLI ou Github</p>
+                <p class="fragment fade-up">Opcional: habilitar auto-deploy e CI</p>
+            </section>
+        </section>
+        <section>
+               <span class="image"><img
+                       src="images/heroku.png" alt="Heroku" height="80%" width="100%"></span>
+        </section>
+        <section>
+            <h2>Subindo na nuvem (mLab)</h2>
+            <section>
+                <p class="fragment fade-up">Cadastrar um banco qualquer</p>
+                <p class="fragment fade-up">Configurar URI obtida e ajustá-la na aplicação</p>
+            </section>
+        </section>
+        <section>
+               <span class="image"><img
+                       src="images/mlab.png" alt="mLab" height="80%" width="100%"></span>
+        </section>
+        <section>
+            <h2>Análise de sentimento e e-mail</h2>
+            <section>
+                <p class="fragment fade-up">Ler um JSON das mensagens (diária/todas) -
+                    <span class="fragment highlight-blue">autor + e-mail + conteúdo!</span></p>
+                <p class="fragment fade-up">Analisar as mensagens com um "mapa" (AFINN-111)</p>
+                <p class="fragment fade-up">Envia um e-mail se a análise resultar num sentimento total
+                    <span class="fragment highlight-blue">"ruim"</span></p>
+            </section>
+        </section>
+        <section>
+               <span class="image"><img
+                       src="images/flowNosso.png" alt="flowNosso" height="100%" width="100%"></span>
+        </section>
+        <section>
+            <h2>Análise de sentimento e IoT</h2>
+            <section>
+                <p class="fragment fade-up">Ler um JSON das mensagens (diária/todas) -
+                    <span class="fragment highlight-blue">autor + e-mail + conteúdo!</span></p>
+                <p class="fragment fade-up">Analisar as mensagens com um "mapa" (AFINN-111)</p>
+                <p class="fragment fade-up">Envia o valor final da soma ao <span
+                        class="fragment highlight-blue">Arduino</span></p>
+            </section>
+        </section>
+        <section>
+               <span class="image"><img
+                       src="images/arduino.JPG" alt="arduino" height="100%" width="100%"></span>
+        </section>
+        <section>
+            <h2>Planos Futuros <span class="fragment highlight-green">EXECUTADOS</span></h2>
+            <p class="fragment fade-up">Autenticação efetiva e obrigatória, ou seja,</p>
+            <p class="fragment fade-up"><span class="fragment highlight-red">OAuth2</span></p>
+            <p class="fragment fade-up">Paginação para performance na verificação dos dados inseridos, ou seja,</p>
+            <p class="fragment fade-up"><span class="fragment highlight-red">AngularJS</span></p>
+            <p class="fragment fade-up">Mineração de Texto (Text Mining) para obter dados significativos das
+                conversas dentro do sistema, ou seja,</p>
+            <p class="fragment fade-up"><span class="fragment highlight-red">possível integração com Node-RED</span>
+            </p>
+        </section>
+        <section>
+            <h2>Planos Futuros</h2>
+            <section>
+                <p class="fragment fade-up">explicar sobre a ideia da startup...</p>
+            </section>
+        </section>
+        <section data-background-image="images/tricked-by-casinos.gif">
+            <h2>Você teria um minutinho para ouvir a palavra sagrada da TI?</h2>
+        </section>
+        <section>
+            <h2>Integração com o FAMA</h2>
+            <section>
+                <p class="fragment fade-up">Mesma ideia de leitura dos sentimentos</p>
+                <p class="fragment fade-up">Acessando os dados do app pelo Firebase</p>
+            </section>
+        </section>
+        <section>
+            <span class="image"><img src="images/flowIntegracao.png" alt="flowIntegracao"></span>
+        </section>
+        <section data-background-image="images/birl2.gif">
+            <img src="images/rift-runners.png" alt="Rift Runners"
+                 style="background:none; border:none; box-shadow:none;">
+            <p>Diego Peixoto e Guilherme Matuella</p>
+        </section>
+    </div>
+</div>
+<script src="js/reveal.js"></script>
+<script>
+    Reveal.initialize();
+</script>
+</body>
+</html>
